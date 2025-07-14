@@ -1,7 +1,6 @@
 package com.github.terrakok.flowmarbles
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
@@ -26,7 +25,7 @@ enum class EventShape {
 }
 
 data class EventData(
-    val time: Int,
+    val time: MutableState<Int>,
     val value: Int,
     val color: Color,
     val shape: EventShape
@@ -38,10 +37,8 @@ private const val MAX_TIME = 1000
 private val eventColors = listOf(
     Color(0xFF6750A4),
     Color(0xFF7F67BE),
-    Color(0xFFB4B0DC),
     Color(0xFF4A6FA5),
     Color(0xFF47B881),
-    Color(0xFFFFB4AB),
     Color(0xFFE46962),
     Color(0xFFFFB94E),
     Color(0xFF00A2B8),
@@ -57,7 +54,7 @@ private fun generateEventFlow(
     .map { Random.nextInt(0, MAX_TIME) }
     .mapIndexed { i, v ->
         EventData(
-            v,
+            mutableStateOf(v),
             i,
             color,
             shape
@@ -67,7 +64,7 @@ private fun generateEventFlow(
 @Composable
 fun EventFlowView(
     flow: EventFlow,
-    onChangeEvent: ((index: Int, new: EventData) -> Unit)? = null,
+    draggable: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val lineColor = MaterialTheme.colorScheme.onSurface
@@ -117,8 +114,8 @@ fun EventFlowView(
         }
         // Draw circles for each event
         flow.forEachIndexed { index, event ->
-            val xPos =
-                arrowWidthPx + (availableWidth * (event.time.toFloat() / MAX_TIME))
+            var eventTime by event.time
+            val xPos = arrowWidthPx + (availableWidth * (eventTime.toFloat() / MAX_TIME))
 
             var offsetX by remember { mutableStateOf(0f) }
             Box(
@@ -129,18 +126,13 @@ fun EventFlowView(
                     )
                     .size(eventSize)
                     .draggable(
-                        enabled = onChangeEvent != null,
+                        enabled = draggable,
                         orientation = Orientation.Horizontal,
                         state = rememberDraggableState { delta ->
-                            val newOffset = offsetX + delta
                             val minOffset = -xPos + arrowWidthPx
                             val maxOffset = availableWidth - xPos
-                            offsetX = newOffset.coerceIn(minOffset, maxOffset)
-                        },
-                        onDragStopped = {
-                            val newTime = ((xPos + offsetX - arrowWidthPx) * MAX_TIME / availableWidth).toInt()
-                            onChangeEvent!!(index, event.copy(time = newTime.coerceIn(0, MAX_TIME)))
-                            offsetX = 0f
+                            val offsetX = delta.coerceIn(minOffset, maxOffset)
+                            eventTime = ((xPos + offsetX - arrowWidthPx) * MAX_TIME / availableWidth).toInt()
                         }
                     )
             ) {
@@ -176,24 +168,26 @@ internal fun App() = AppTheme {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Case1()
+        FlowMap()
         HorizontalDivider()
-        Case2()
+        FlowDelay()
         HorizontalDivider()
-        Case3()
+        FlowFilter()
+        HorizontalDivider()
+        FlowMerge()
     }
 }
 
 @Composable
-fun Case1() {
-    val f1 = remember { mutableStateListOf(*generateEventFlow(8).toTypedArray()) }
+fun FlowMap() {
+    val f1 = remember { generateEventFlow(8, color = eventColors[3]) }
     EventFlowView(
         flow = f1,
-        onChangeEvent = { index, new -> f1[index] = new },
+        draggable = true,
         modifier = Modifier.fillMaxWidth().height(80.dp)
     )
 
-    val result = f1.map { it.copy(color = eventColors[1]) }
+    val result = f1.map { it.copy(color = eventColors[4]) }
     Spacer(Modifier.height(16.dp))
     Text("flow.map { it.copy(color = newColor) }")
     EventFlowView(
@@ -203,15 +197,15 @@ fun Case1() {
 }
 
 @Composable
-fun Case2() {
-    val f1 = remember { mutableStateListOf(*generateEventFlow(8).toTypedArray()) }
+fun FlowDelay() {
+    val f1 = remember { generateEventFlow(8) }
     EventFlowView(
         flow = f1,
-        onChangeEvent = { index, new -> f1[index] = new },
+        draggable = true,
         modifier = Modifier.fillMaxWidth().height(80.dp)
     )
 
-    val result = f1.map { it.copy(time = it.time + 50) }
+    val result = f1.map { it.copy(time = mutableStateOf(it.time.value + 50)) }
     Spacer(Modifier.height(16.dp))
     Text("flow.delay(50)")
     EventFlowView(
@@ -221,17 +215,41 @@ fun Case2() {
 }
 
 @Composable
-fun Case3() {
-    val f1 = remember { mutableStateListOf(*generateEventFlow(8).toTypedArray()) }
+fun FlowFilter() {
+    val f1 = remember { generateEventFlow(8) }
     EventFlowView(
         flow = f1,
-        onChangeEvent = { index, new -> f1[index] = new },
+        draggable = true,
         modifier = Modifier.fillMaxWidth().height(80.dp)
     )
 
     val result = f1.filter { it.value < 4 }
     Spacer(Modifier.height(16.dp))
     Text("flow.filter { it.value < 4 }")
+    EventFlowView(
+        flow = result,
+        modifier = Modifier.fillMaxWidth().height(80.dp)
+    )
+}
+
+@Composable
+fun FlowMerge() {
+    val f1 = remember { generateEventFlow(5, color = eventColors[5], shape = EventShape.Diamond) }
+    val f2 = remember { generateEventFlow(5, color = eventColors[2], shape = EventShape.Circle) }
+    EventFlowView(
+        flow = f1,
+        draggable = true,
+        modifier = Modifier.fillMaxWidth().height(80.dp)
+    )
+    EventFlowView(
+        flow = f2,
+        draggable = true,
+        modifier = Modifier.fillMaxWidth().height(80.dp)
+    )
+
+    val result = f1.plus(f2)
+    Spacer(Modifier.height(16.dp))
+    Text("flow.merge(flow2)")
     EventFlowView(
         flow = result,
         modifier = Modifier.fillMaxWidth().height(80.dp)
