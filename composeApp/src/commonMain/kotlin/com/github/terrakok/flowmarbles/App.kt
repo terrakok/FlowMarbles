@@ -82,6 +82,9 @@ internal fun App() = AppTheme {
                 var showFilter by remember { mutableStateOf(true) }
                 var showDrop by remember { mutableStateOf(false) }
                 var showTake by remember { mutableStateOf(false) }
+                var showDebounce by remember { mutableStateOf(false) }
+                var showSample by remember { mutableStateOf(false) }
+
                 var showMerge by remember { mutableStateOf(true) }
                 var showCombine by remember { mutableStateOf(false) }
                 var showZip by remember { mutableStateOf(false) }
@@ -106,6 +109,18 @@ internal fun App() = AppTheme {
                         Text("take")
                     }
                     TextButton(
+                        onClick = { showDebounce = !showDebounce },
+                        border = if (showDebounce) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
+                    ) {
+                        Text("debounce")
+                    }
+                    TextButton(
+                        onClick = { showSample = !showSample },
+                        border = if (showSample) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
+                    ) {
+                        Text("sample")
+                    }
+                    TextButton(
                         onClick = { showMerge = !showMerge },
                         border = if (showMerge) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
                     ) { Text("merge") }
@@ -126,6 +141,8 @@ internal fun App() = AppTheme {
                     if (showFilter) FlowFilter()
                     if (showDrop) FlowDrop()
                     if (showTake) FlowTake()
+                    if (showDebounce) FlowDebounce()
+                    if (showSample) FlowSample()
                     if (showMerge) FlowMerge()
                     if (showCombine) FlowCombine()
                     if (showZip) FlowZip()

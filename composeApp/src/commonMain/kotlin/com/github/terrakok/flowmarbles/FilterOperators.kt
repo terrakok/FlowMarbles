@@ -9,8 +9,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.take
 
 @Composable
@@ -47,6 +49,30 @@ fun FlowTake(modifier: Modifier = Modifier) {
             f1.take(5)
         },
         text = "take(5)",
+        modifier = modifier
+    )
+}
+
+@Composable
+fun FlowDebounce(modifier: Modifier = Modifier) {
+    FlowCase1(
+        input1 = remember { generateMutableEvents(7) },
+        operator = { f1 ->
+            f1.debounce(200)
+        },
+        text = "debounce(200)",
+        modifier = modifier
+    )
+}
+
+@Composable
+fun FlowSample(modifier: Modifier = Modifier) {
+    FlowCase1(
+        input1 = remember { generateMutableEvents(7) },
+        operator = { f1 ->
+            f1.sample(200)
+        },
+        text = "sample(200)",
         modifier = modifier
     )
 }
