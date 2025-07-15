@@ -115,7 +115,8 @@ internal fun App() = AppTheme {
                     label = """
                         transform {
                             emit(it)
-                            emit(it.copy(time = it.time + 100, shape = Diamond))
+                            delay(100)
+                            emit(it.copy(shape = Diamond))
                         }
                     """.trimIndent(),
                 )
