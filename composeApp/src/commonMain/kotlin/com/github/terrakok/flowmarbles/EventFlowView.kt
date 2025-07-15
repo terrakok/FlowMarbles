@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,10 +26,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.github.terrakok.flowmarbles.Event.Data
+import com.github.terrakok.flowmarbles.Event.RED
+import com.github.terrakok.flowmarbles.Event.Shape
+import kotlin.random.Random
+
+data class MutableEvent(val data: Event.Data) {
+    val timeState = mutableStateOf(data.time)
+}
+
+
+fun generateMutableEvents(
+    count: Int = 5,
+    colors: List<Color> = listOf(RED),
+    shapes: List<Shape> = listOf(Shape.Circle)
+): List<MutableEvent> = (1..count)
+    .map { Random.nextLong(0, MAX_TIME) }
+    .sorted()
+    .mapIndexed { i, v ->
+        MutableEvent(
+            Data(v, i, colors[i % colors.size], shapes[i % shapes.size])
+        )
+    }
 
 @Composable
 fun EventFlowView(
-    flow: EventFlow,
+    events: List<MutableEvent>,
     draggable: Boolean = false,
     modifier: Modifier = Modifier
 ) {
@@ -80,15 +101,14 @@ fun EventFlowView(
             (maxWidth - arrowWidth * 2).toPx()
         }
         // Draw circles for each event
-        flow.forEachIndexed { index, event ->
-            var eventTime by event.time
+        events.forEachIndexed { index, event ->
+            var eventTime by event.timeState
             val xPos = arrowWidthPx + (availableWidth * (eventTime.toFloat() / MAX_TIME))
 
-            var offsetX by remember { mutableStateOf(0f) }
             Box(
                 modifier = Modifier
                     .offset(
-                        x = with(LocalDensity.current) { (xPos + offsetX).toDp() - eventSize / 2 },
+                        x = with(LocalDensity.current) { xPos.toDp() - eventSize / 2 },
                         y = maxHeight / 2 - eventSize / 2
                     )
                     .size(eventSize)
@@ -99,22 +119,22 @@ fun EventFlowView(
                             val minOffset = -xPos + arrowWidthPx
                             val maxOffset = availableWidth - xPos
                             val offsetX = delta.coerceIn(minOffset, maxOffset)
-                            eventTime = ((xPos + offsetX - arrowWidthPx) * MAX_TIME / availableWidth).toInt()
+                            eventTime = ((xPos + offsetX - arrowWidthPx) * MAX_TIME / availableWidth).toLong()
                         }
                     )
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = event.color.color,
-                    shape = when (event.shape) {
-                        EventShape.Square -> RoundedCornerShape(0)
-                        EventShape.Circle -> RoundedCornerShape(50)
-                        EventShape.Diamond -> CutCornerShape(50)
+                    color = event.data.color,
+                    shape = when (event.data.shape) {
+                        Event.Shape.Square -> RoundedCornerShape(0)
+                        Event.Shape.Circle -> RoundedCornerShape(50)
+                        Event.Shape.Diamond -> CutCornerShape(50)
                     },
                     shadowElevation = 4.dp,
                 ) {
                     Text(
-                        text = event.value.toString(),
+                        text = event.data.value.toString(),
                         color = Color.White,
                         modifier = Modifier.align(Alignment.Center).wrapContentSize(),
                         style = MaterialTheme.typography.labelSmall.copy(),

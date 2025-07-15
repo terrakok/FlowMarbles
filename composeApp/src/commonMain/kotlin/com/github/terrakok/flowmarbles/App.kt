@@ -1,9 +1,11 @@
 package com.github.terrakok.flowmarbles
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,11 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,63 +78,58 @@ internal fun App() = AppTheme {
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(40.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.safeDrawing),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                FlowCase(
-                    inputFlow = generateEventFlow(color = EventColor.RED),
-                    operator = { map { it.copy(color = EventColor.YELLOW) } },
-                    label = "map { it.copy(color = YELLOW) }",
-                )
-                FlowCase(
-                    inputFlow = generateEventFlow(),
-                    operator = { filter { it.value < 4 } },
-                    label = " filter { it.value < 4 }",
-                )
-                FlowCase(
-                    inputFlow = generateEventFlow(color = EventColor.PURPLE),
-                    operator = { take(3) },
-                    label = " take(3)",
-                )
-//                FlowCase(
-//                    inputFlow = generateEventFlow(),
-//                    operator = { debounce(200) },
-//                    label = " debounce(200) ",
-//                )
-//                FlowCase(
-//                    inputFlow = generateEventFlow(),
-//                    operator = { sample(200) },
-//                    label = " sample(200) ",
-//                )
-                FlowCase(
-                    inputFlow = generateEventFlow(color = EventColor.RED),
-                    operator = { transform {
-                        emit(it)
-                        emit(it.copy(time = mutableStateOf(it.time.value + 100), shape = EventShape.Diamond))
-                    } },
-                    label = """
-                        transform {
-                            emit(it)
-                            delay(100)
-                            emit(it.copy(shape = Diamond))
-                        }
-                    """.trimIndent(),
-                )
-                FlowCase(
-                    inputFlow =
-                        generateEventFlow(3, EventColor.PURPLE, EventShape.Diamond) +
-                                generateEventFlow(3, EventColor.YELLOW, EventShape.Circle),
-                    operator = { distinctUntilChanged { old, new -> old.shape == new.shape } },
-                    label = " distinctUntilChanged { old, new -> old.shape == new.shape } ",
-                )
-                FlowMerge(
-                    inputFlow1 = generateEventFlow(4, color = EventColor.GREEN, shape = EventShape.Diamond),
-                    inputFlow2 = generateEventFlow(4, color = EventColor.RED, shape = EventShape.Circle),
-                )
+            Row {
+                var showFilter by remember { mutableStateOf(true) }
+                var showDrop by remember { mutableStateOf(false) }
+                var showTake by remember { mutableStateOf(false) }
+                var showMerge by remember { mutableStateOf(true) }
+                var showCombine by remember { mutableStateOf(false) }
+                var showZip by remember { mutableStateOf(false) }
+
+                Column {
+                    TextButton(
+                        onClick = { showFilter = !showFilter },
+                        border = if (showFilter) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
+                    ) {
+                        Text("filter")
+                    }
+                    TextButton(
+                        onClick = { showDrop = !showDrop },
+                        border = if (showDrop) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
+                    ) {
+                        Text("drop")
+                    }
+                    TextButton(
+                        onClick = { showTake = !showTake },
+                        border = if (showTake) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
+                    ) {
+                        Text("take")
+                    }
+                    TextButton(
+                        onClick = { showMerge = !showMerge },
+                        border = if (showMerge) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
+                    ) { Text("merge") }
+                    TextButton(
+                        onClick = { showCombine = !showCombine },
+                        border = if (showCombine) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
+                    ) { Text("combine") }
+                    TextButton(
+                        onClick = { showZip = !showZip },
+                        border = if (showZip) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
+                    ) { Text("zip") }
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    if (showFilter) FlowFilter()
+                    if (showDrop) FlowDrop()
+                    if (showTake) FlowTake()
+                    if (showMerge) FlowMerge()
+                    if (showCombine) FlowCombine()
+                    if (showZip) FlowZip()
+                }
             }
         }
     }
