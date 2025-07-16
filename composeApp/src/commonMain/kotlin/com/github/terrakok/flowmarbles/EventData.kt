@@ -9,18 +9,17 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
-import kotlin.random.Random
 
 const val MAX_TIME = 1000L
 
 object Event {
     enum class Shape { Square, Circle, Diamond }
 
-    val PURPLE = Color(0xFF7F67BE)
-    val BLUE = Color(0xFF4A6FA5)
-    val GREEN = Color(0xFF47B881)
-    val RED = Color(0xFFE46962)
-    val YELLOW = Color(0xFFFFB94E)
+    val PURPLE = Color(0xFF9c27b0)
+    val BLUE = Color(0xFF3f51b5)
+    val YELLOW = Color(0xFFff9800)
+    val GREY = Color(0xFF607d8b)
+    val BROWN = Color(0xFF795548)
 
     data class Data(
         val time: Long,

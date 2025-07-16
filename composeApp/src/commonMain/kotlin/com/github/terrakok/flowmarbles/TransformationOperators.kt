@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.runningReduce
@@ -55,14 +54,14 @@ fun FlowTransform(modifier: Modifier = Modifier) {
             f1.transform {
                 emit(it.copy(color = Event.YELLOW))
                 delay(100)
-                emit(it.copy(time = it.time + 100, color = Event.GREEN))
+                emit(it.copy(time = it.time + 100, color = Event.BROWN))
             }
         },
         text = """
             transform { 
                 emit(it.copy(color = YELLOW))
                 delay(100)
-                emit(it.copy(color = GREEN))
+                emit(it.copy(color = BROWN))
             }
         """.trimIndent(),
         modifier = modifier
@@ -77,14 +76,14 @@ fun FlowTransformLatest(modifier: Modifier = Modifier) {
             f1.transformLatest {
                 emit(it.copy(color = Event.YELLOW))
                 delay(100)
-                emit(it.copy(time = it.time + 100, color = Event.GREEN))
+                emit(it.copy(time = it.time + 100, color = Event.BROWN))
             }
         },
         text = """
             transformLatest { 
                 emit(it.copy(color = YELLOW))
                 delay(100)
-                emit(it.copy(color = GREEN))
+                emit(it.copy(color = BROWN))
             }
         """.trimIndent(),
         modifier = modifier

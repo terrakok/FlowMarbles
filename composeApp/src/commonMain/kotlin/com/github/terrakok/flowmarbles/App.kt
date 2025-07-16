@@ -147,6 +147,10 @@ internal fun App() = AppTheme {
                         Operator("Merge", mutableStateOf(true)) { FlowMerge() },
                         Operator("Combine") { FlowCombine() },
                         Operator("Zip") { FlowZip() },
+                        Operator("FlatMapMerge") { FlowFlatMapMerge() },
+                        Operator("FlatMapConcat") { FlowFlatMapConcat() },
+                        Operator("FlatMapLatest") { FlowFlatMapLatest() },
+
                     )
                 }
 

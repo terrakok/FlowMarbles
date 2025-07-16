@@ -26,8 +26,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.github.terrakok.flowmarbles.Event.BLUE
 import com.github.terrakok.flowmarbles.Event.Data
-import com.github.terrakok.flowmarbles.Event.RED
+import com.github.terrakok.flowmarbles.Event.GREY
 import com.github.terrakok.flowmarbles.Event.Shape
 import kotlin.random.Random
 
@@ -38,7 +39,7 @@ data class MutableEvent(val data: Event.Data) {
 
 fun generateMutableEvents(
     count: Int = 5,
-    colors: List<Color> = listOf(RED),
+    colors: List<Color> = listOf(BLUE),
     shapes: List<Shape> = listOf(Shape.Circle),
     value: (Int) -> Int = { it }
 ): List<MutableEvent> = (1..count)
