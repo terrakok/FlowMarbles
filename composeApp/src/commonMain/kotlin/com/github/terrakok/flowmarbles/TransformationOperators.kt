@@ -61,7 +61,7 @@ fun FlowTransform(modifier: Modifier = Modifier) {
             transform { 
                 emit(it.copy(color = YELLOW))
                 delay(100)
-                emit(it.copy(color = BROWN))
+                emit(it.copy(color = GREEN))
             }
         """.trimIndent(),
         modifier = modifier
@@ -83,7 +83,7 @@ fun FlowTransformLatest(modifier: Modifier = Modifier) {
             transformLatest { 
                 emit(it.copy(color = YELLOW))
                 delay(100)
-                emit(it.copy(color = BROWN))
+                emit(it.copy(color = GREEN))
             }
         """.trimIndent(),
         modifier = modifier

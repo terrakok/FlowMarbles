@@ -21,7 +21,7 @@ fun FlowFilter(modifier: Modifier = Modifier) {
         operator = { f1 ->
             f1.filter { it.color != Event.RED }
         },
-        text = "filter { it.color != GREY }",
+        text = "filter { it.color != RED }",
         modifier = modifier
     )
 }
