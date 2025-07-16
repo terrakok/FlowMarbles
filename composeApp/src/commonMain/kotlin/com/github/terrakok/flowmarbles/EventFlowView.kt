@@ -28,8 +28,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.github.terrakok.flowmarbles.Event.BLUE
 import com.github.terrakok.flowmarbles.Event.Data
-import com.github.terrakok.flowmarbles.Event.GREY
-import com.github.terrakok.flowmarbles.Event.Shape
 import kotlin.random.Random
 
 data class MutableEvent(val data: Event.Data) {
@@ -40,14 +38,13 @@ data class MutableEvent(val data: Event.Data) {
 fun generateMutableEvents(
     count: Int = 5,
     colors: List<Color> = listOf(BLUE),
-    shapes: List<Shape> = listOf(Shape.Circle),
     value: (Int) -> Int = { it }
 ): List<MutableEvent> = (1..count)
     .map { Random.nextLong(0, MAX_TIME) }
     .sorted()
     .mapIndexed { i, v ->
         MutableEvent(
-            Data(v, value(i), colors[i % colors.size], shapes[i % shapes.size])
+            Data(v, value(i), colors[i % colors.size])
         )
     }
 
@@ -128,10 +125,12 @@ fun EventFlowView(
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = event.data.color,
-                    shape = when (event.data.shape) {
-                        Event.Shape.Square -> RoundedCornerShape(0)
-                        Event.Shape.Circle -> RoundedCornerShape(50)
-                        Event.Shape.Diamond -> CutCornerShape(50)
+                    shape = when (event.data.color) {
+                        Event.BLUE -> RoundedCornerShape(50)
+                        Event.YELLOW -> CutCornerShape(50)
+                        Event.RED -> CutCornerShape(25)
+                        Event.PURPLE -> CutCornerShape(0)
+                        else -> RoundedCornerShape(25)
                     },
                     shadowElevation = 4.dp,
                 ) {

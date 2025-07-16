@@ -33,7 +33,7 @@ fun FlowMapLatest(modifier: Modifier = Modifier) {
         operator = { f1 ->
             f1.mapLatest {
                 delay(200)
-                it.copy(color = Event.YELLOW)
+                it.copy(time = it.time + 200, color = Event.YELLOW)
             }
         },
         text = """
@@ -54,7 +54,7 @@ fun FlowTransform(modifier: Modifier = Modifier) {
             f1.transform {
                 emit(it.copy(color = Event.YELLOW))
                 delay(100)
-                emit(it.copy(time = it.time + 100, color = Event.BROWN))
+                emit(it.copy(time = it.time + 100, color = Event.GREEN))
             }
         },
         text = """
@@ -76,7 +76,7 @@ fun FlowTransformLatest(modifier: Modifier = Modifier) {
             f1.transformLatest {
                 emit(it.copy(color = Event.YELLOW))
                 delay(100)
-                emit(it.copy(time = it.time + 100, color = Event.BROWN))
+                emit(it.copy(time = it.time + 100, color = Event.GREEN))
             }
         },
         text = """

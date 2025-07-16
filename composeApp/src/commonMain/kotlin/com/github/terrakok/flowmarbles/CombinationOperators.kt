@@ -19,8 +19,7 @@ fun FlowMerge(modifier: Modifier = Modifier) {
         input2 = remember {
             generateMutableEvents(
                 count = 3,
-                colors = listOf(Event.BROWN),
-                shapes = listOf(Event.Shape.Diamond)
+                colors = listOf(Event.GREEN),
             )
         },
         operator = { f1, f2 ->
@@ -38,8 +37,7 @@ fun FlowCombine(modifier: Modifier = Modifier) {
         input2 = remember {
             generateMutableEvents(
                 count = 3,
-                colors = listOf(Event.BROWN, Event.YELLOW, Event.BLUE),
-                shapes = listOf(Event.Shape.Diamond)
+                colors = listOf(Event.GREEN, Event.YELLOW, Event.BLUE),
             )
         },
         operator = { f1, f2 ->
@@ -48,7 +46,6 @@ fun FlowCombine(modifier: Modifier = Modifier) {
                     time = max(first.time, second.time),
                     value = first.value + second.value,
                     color = first.color,
-                    shape = second.shape,
                 )
             }
         },
@@ -70,8 +67,7 @@ fun FlowZip(modifier: Modifier = Modifier) {
         input2 = remember {
             generateMutableEvents(
                 count = 3,
-                colors = listOf(Event.BROWN),
-                shapes = listOf(Event.Shape.Diamond)
+                colors = listOf(Event.GREEN)
             )
         },
         operator = { f1, f2 ->
@@ -79,8 +75,7 @@ fun FlowZip(modifier: Modifier = Modifier) {
                 Event.Data(
                     time = max(first.time, second.time),
                     value = first.value + second.value,
-                    color = first.color,
-                    shape = second.shape,
+                    color = first.color
                 )
             }
         },
@@ -101,8 +96,8 @@ fun FlowFlatMapMerge(modifier: Modifier = Modifier) {
         input1 = remember { generateMutableEvents(3) },
         input2 = remember {
             listOf(
-                MutableEvent(Event.Data(10, 1, Event.PURPLE, Event.Shape.Diamond)),
-                MutableEvent(Event.Data(70, 2, Event.PURPLE, Event.Shape.Diamond)),
+                MutableEvent(Event.Data(10, 1, Event.PURPLE)),
+                MutableEvent(Event.Data(70, 2, Event.PURPLE)),
             )
         },
         operator = { f1, f2 ->
@@ -119,8 +114,8 @@ fun FlowFlatMapConcat(modifier: Modifier = Modifier) {
         input1 = remember { generateMutableEvents(3) },
         input2 = remember {
             listOf(
-                MutableEvent(Event.Data(10, 1, Event.PURPLE, Event.Shape.Diamond)),
-                MutableEvent(Event.Data(70, 2, Event.PURPLE, Event.Shape.Diamond)),
+                MutableEvent(Event.Data(10, 1, Event.PURPLE)),
+                MutableEvent(Event.Data(70, 2, Event.PURPLE)),
             )
         },
         operator = { f1, f2 ->
@@ -137,8 +132,8 @@ fun FlowFlatMapLatest(modifier: Modifier = Modifier) {
         input1 = remember { generateMutableEvents(3) },
         input2 = remember {
             listOf(
-                MutableEvent(Event.Data(10, 1, Event.PURPLE, Event.Shape.Diamond)),
-                MutableEvent(Event.Data(70, 2, Event.PURPLE, Event.Shape.Diamond)),
+                MutableEvent(Event.Data(10, 1, Event.PURPLE)),
+                MutableEvent(Event.Data(70, 2, Event.PURPLE)),
             )
         },
         operator = { f1, f2 ->

@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.takeWhile
 fun FlowFilter(modifier: Modifier = Modifier) {
     FlowCase1(
         input1 = remember {
-            generateMutableEvents(7, colors = listOf(Event.GREY, Event.YELLOW))
+            generateMutableEvents(7, colors = listOf(Event.RED, Event.YELLOW))
         },
         operator = { f1 ->
-            f1.filter { it.color != Event.GREY }
+            f1.filter { it.color != Event.RED }
         },
         text = "filter { it.color != GREY }",
         modifier = modifier
@@ -102,7 +102,7 @@ fun FlowSample(modifier: Modifier = Modifier) {
 fun FlowDistinctUntilChangedBy(modifier: Modifier = Modifier) {
     FlowCase1(
         input1 = remember {
-            generateMutableEvents(7, colors = listOf(Event.GREY, Event.BROWN, Event.BROWN, Event.BROWN))
+            generateMutableEvents(7, colors = listOf(Event.RED, Event.GREEN, Event.GREEN, Event.GREEN))
         },
         operator = { f1 ->
             f1.distinctUntilChangedBy { it.color }

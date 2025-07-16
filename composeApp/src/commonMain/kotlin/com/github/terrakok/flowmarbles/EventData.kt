@@ -13,19 +13,16 @@ import kotlinx.coroutines.test.TestCoroutineScheduler
 const val MAX_TIME = 1000L
 
 object Event {
-    enum class Shape { Square, Circle, Diamond }
-
     val PURPLE = Color(0xFF9c27b0)
-    val BLUE = Color(0xFF3f51b5)
+    val BLUE = Color(0xFF5D6DE1)
     val YELLOW = Color(0xFFff9800)
-    val GREY = Color(0xFF607d8b)
-    val BROWN = Color(0xFF795548)
+    val RED = Color(0xFFf44336)
+    val GREEN = Color(0xFF4caf50)
 
     data class Data(
         val time: Long,
         val value: Int,
-        val color: Color,
-        val shape: Shape
+        val color: Color
     )
 }
 
