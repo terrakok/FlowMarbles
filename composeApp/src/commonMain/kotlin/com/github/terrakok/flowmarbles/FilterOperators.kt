@@ -1,19 +1,16 @@
 package com.github.terrakok.flowmarbles
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.takeWhile
 
 @Composable
 fun FlowFilter(modifier: Modifier = Modifier) {
@@ -24,7 +21,7 @@ fun FlowFilter(modifier: Modifier = Modifier) {
         operator = { f1 ->
             f1.filter { it.color != Event.GREEN }
         },
-        text = "filter { it.color != Event.GREEN }",
+        text = "filter { it.color != GREEN }",
         modifier = modifier
     )
 }
@@ -42,6 +39,18 @@ fun FlowDrop(modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun FlowDropWhile(modifier: Modifier = Modifier) {
+    FlowCase1(
+        input1 = remember { generateMutableEvents(7) },
+        operator = { f1 ->
+            f1.dropWhile { it.value < 3 }
+        },
+        text = "dropWhile { it.value < 3 }",
+        modifier = modifier
+    )
+}
+
+@Composable
 fun FlowTake(modifier: Modifier = Modifier) {
     FlowCase1(
         input1 = remember { generateMutableEvents(7) },
@@ -49,6 +58,18 @@ fun FlowTake(modifier: Modifier = Modifier) {
             f1.take(5)
         },
         text = "take(5)",
+        modifier = modifier
+    )
+}
+
+@Composable
+fun FlowTakeWhile(modifier: Modifier = Modifier) {
+    FlowCase1(
+        input1 = remember { generateMutableEvents(7) },
+        operator = { f1 ->
+            f1.takeWhile { it.value < 5 }
+        },
+        text = "takeWhile { it.value < 5 }",
         modifier = modifier
     )
 }
@@ -78,25 +99,15 @@ fun FlowSample(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun FlowCase1(
-    input1: List<MutableEvent>,
-    operator: (Flow<Event.Data>) -> Flow<Event.Data>,
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    val f1 by remember {
-        derivedStateOf { input1.map { it.data.copy(time = it.timeState.value) }.sortedBy { it.time } }
-    }
-
-    var result by remember { mutableStateOf(emptyList<MutableEvent>()) }
-    LaunchedEffect(f1) {
-        result = operator(f1.asFlow()).asList().map { MutableEvent(it) }
-    }
-
-    FlowCaseCard(
-        input1,
-        text = text,
-        result = result,
+fun FlowDistinctUntilChangedBy(modifier: Modifier = Modifier) {
+    FlowCase1(
+        input1 = remember {
+            generateMutableEvents(7, colors = listOf(Event.RED, Event.GREEN, Event.GREEN, Event.GREEN))
+        },
+        operator = { f1 ->
+            f1.distinctUntilChangedBy { it.color }
+        },
+        text = "distinctUntilChangedBy { it.color }",
         modifier = modifier
     )
 }

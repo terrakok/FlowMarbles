@@ -1,26 +1,23 @@
 package com.github.terrakok.flowmarbles
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,14 +29,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.github.terrakok.flowmarbles.theme.AppTheme
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.sample
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.transform
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Preview
@@ -79,75 +68,77 @@ internal fun App() = AppTheme {
             )
             Spacer(modifier = Modifier.height(40.dp))
             Row {
-                var showFilter by remember { mutableStateOf(true) }
-                var showDrop by remember { mutableStateOf(false) }
-                var showTake by remember { mutableStateOf(false) }
-                var showDebounce by remember { mutableStateOf(false) }
-                var showSample by remember { mutableStateOf(false) }
 
-                var showMerge by remember { mutableStateOf(true) }
-                var showCombine by remember { mutableStateOf(false) }
-                var showZip by remember { mutableStateOf(false) }
+                val filterItems = remember {
+                    listOf(
+                        Operator("Filter", mutableStateOf(true)) { FlowFilter() },
+                        Operator("Drop") { FlowDrop() },
+                        Operator("DropWhile") { FlowDropWhile() },
+                        Operator("Take") { FlowTake() },
+                        Operator("TakeWhile") { FlowTakeWhile() },
+                        Operator("Debounce") { FlowDebounce() },
+                        Operator("Sample") { FlowSample() },
+                        Operator("DistinctUntilChanged") { FlowDistinctUntilChangedBy() },
+                    )
+                }
+
+                val transformationItems = remember {
+                    listOf(
+                        Operator("Map") { FlowMap() },
+                        Operator("MapLatest") { FlowMapLatest() },
+                        Operator("Transform") { FlowTransform() },
+                        Operator("TransformLatest") { FlowTransformLatest() },
+                        Operator("TransformWhile") { FlowTransformWhile() },
+                        Operator("WithIndex") { FlowWithIndex() },
+                        Operator("RunningReduce") { FlowRunningReduce() },
+                    )
+                }
+
+                val combinationItems = remember {
+                    listOf(
+                        Operator("Merge", mutableStateOf(true)) { FlowMerge() },
+                        Operator("Combine") { FlowCombine() },
+                        Operator("Zip") { FlowZip() },
+                    )
+                }
 
                 Column {
-                    TextButton(
-                        onClick = { showFilter = !showFilter },
-                        border = if (showFilter) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
-                    ) {
-                        Text("filter")
-                    }
-                    TextButton(
-                        onClick = { showDrop = !showDrop },
-                        border = if (showDrop) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
-                    ) {
-                        Text("drop")
-                    }
-                    TextButton(
-                        onClick = { showTake = !showTake },
-                        border = if (showTake) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
-                    ) {
-                        Text("take")
-                    }
-                    TextButton(
-                        onClick = { showDebounce = !showDebounce },
-                        border = if (showDebounce) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
-                    ) {
-                        Text("debounce")
-                    }
-                    TextButton(
-                        onClick = { showSample = !showSample },
-                        border = if (showSample) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
-                    ) {
-                        Text("sample")
-                    }
-                    TextButton(
-                        onClick = { showMerge = !showMerge },
-                        border = if (showMerge) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
-                    ) { Text("merge") }
-                    TextButton(
-                        onClick = { showCombine = !showCombine },
-                        border = if (showCombine) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
-                    ) { Text("combine") }
-                    TextButton(
-                        onClick = { showZip = !showZip },
-                        border = if (showZip) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
-                    ) { Text("zip") }
+                    Text(text = "Filter Operators", style = MaterialTheme.typography.labelLarge)
+                    filterItems.forEach { item -> OperatorChip(item) }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(text = "Transformation Operators", style = MaterialTheme.typography.labelLarge)
+                    transformationItems.forEach { item -> OperatorChip(item) }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(text = "Combination Operators", style = MaterialTheme.typography.labelLarge)
+                    combinationItems.forEach { item -> OperatorChip(item) }
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    if (showFilter) FlowFilter()
-                    if (showDrop) FlowDrop()
-                    if (showTake) FlowTake()
-                    if (showDebounce) FlowDebounce()
-                    if (showSample) FlowSample()
-                    if (showMerge) FlowMerge()
-                    if (showCombine) FlowCombine()
-                    if (showZip) FlowZip()
+                    (filterItems + transformationItems + combinationItems).forEach { item ->
+                        if (item.enabled.value) { item.view() }
+                    }
                 }
             }
         }
     }
+}
+
+data class Operator(
+    val name: String,
+    val enabled: MutableState<Boolean> = mutableStateOf(false),
+    val view: @Composable () -> Unit
+)
+
+@Composable
+fun OperatorChip(operator: Operator) {
+    var enabled by operator.enabled
+    FilterChip(
+        onClick = { enabled = !enabled },
+        selected = enabled,
+        label = { Text(operator.name) },
+        elevation = null
+    )
 }

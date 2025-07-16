@@ -39,13 +39,14 @@ data class MutableEvent(val data: Event.Data) {
 fun generateMutableEvents(
     count: Int = 5,
     colors: List<Color> = listOf(RED),
-    shapes: List<Shape> = listOf(Shape.Circle)
+    shapes: List<Shape> = listOf(Shape.Circle),
+    value: (Int) -> Int = { it }
 ): List<MutableEvent> = (1..count)
     .map { Random.nextLong(0, MAX_TIME) }
     .sorted()
     .mapIndexed { i, v ->
         MutableEvent(
-            Data(v, i, colors[i % colors.size], shapes[i % shapes.size])
+            Data(v, value(i), colors[i % colors.size], shapes[i % shapes.size])
         )
     }
 

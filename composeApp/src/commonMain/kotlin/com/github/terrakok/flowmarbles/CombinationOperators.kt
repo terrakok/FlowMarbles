@@ -96,31 +96,3 @@ fun FlowZip(modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-
-@Composable
-fun FlowCase2(
-    input1: List<MutableEvent>,
-    input2: List<MutableEvent>,
-    operator: (Flow<Event.Data>, Flow<Event.Data>) -> Flow<Event.Data>,
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    val f1 by remember {
-        derivedStateOf { input1.map { it.data.copy(time = it.timeState.value) }.sortedBy { it.time } }
-    }
-    val f2 by remember {
-        derivedStateOf { input2.map { it.data.copy(time = it.timeState.value) }.sortedBy { it.time } }
-    }
-
-    var result by remember { mutableStateOf(emptyList<MutableEvent>()) }
-    LaunchedEffect(f1, f2) {
-        result = operator(f1.asFlow(), f2.asFlow()).asList().map { MutableEvent(it) }
-    }
-
-    FlowCaseCard(
-        input1, input2,
-        text = text,
-        result = result,
-        modifier = modifier
-    )
-}
