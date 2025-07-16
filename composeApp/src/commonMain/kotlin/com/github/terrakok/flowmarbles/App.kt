@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,8 +29,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.github.terrakok.flowmarbles.theme.AppTheme
+import com.github.terrakok.flowmarbles.theme.LocalThemeIsDark
+import flowmarbles.composeapp.generated.resources.Res
+import flowmarbles.composeapp.generated.resources.coffee
+import flowmarbles.composeapp.generated.resources.document
+import flowmarbles.composeapp.generated.resources.ic_dark_mode
+import flowmarbles.composeapp.generated.resources.ic_light_mode
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Preview
@@ -58,10 +68,48 @@ internal fun App() = AppTheme {
                 }
                 .padding(40.dp)
         ) {
-            Text(
-                text = "Flow Marbles",
-                style = MaterialTheme.typography.displayLarge
-            )
+            Row(
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Text(
+                    text = "Flow Marbles",
+                    style = MaterialTheme.typography.displayLarge
+                )
+                Spacer(modifier = Modifier.weight(1f))
+
+                val uriHandler = LocalUriHandler.current
+                IconButton(
+                    onClick = { uriHandler.openUri("https://www.buymeacoffee.com/terrakok") },
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.coffee),
+                        contentDescription = "BuyMeACoffee",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                IconButton(
+                    onClick = { uriHandler.openUri("https://github.com/terrakok/FlowMarbles") },
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.document),
+                        contentDescription = "GitHub",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                var themeIsDark by LocalThemeIsDark.current
+                IconButton(
+                    onClick = { themeIsDark = !themeIsDark },
+                ) {
+                    Icon(
+                        painter = painterResource(
+                            if (themeIsDark) Res.drawable.ic_light_mode else Res.drawable.ic_dark_mode
+                        ),
+                        contentDescription = "Theme",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
             Text(
                 text = "Interactive diagrams of Kotlinx.coroutines Flow",
                 style = MaterialTheme.typography.headlineMedium
