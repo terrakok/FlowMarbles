@@ -52,8 +52,7 @@ fun FlowCombine(modifier: Modifier = Modifier) {
         text = """
             flowA.combine(flowB) { first, second -> Event(
                 value = first.value + second.value,
-                color = first.color, 
-                shape = second.shape 
+                color = first.color 
             ) }
         """.trimIndent(),
         modifier = modifier
@@ -82,8 +81,7 @@ fun FlowZip(modifier: Modifier = Modifier) {
         text = """
             flowA.zip(flowB) { first, second -> Event(
                 value = first.value + second.value,
-                color = first.color, 
-                shape = second.shape 
+                color = first.color
             ) }
         """.trimIndent(),
         modifier = modifier
