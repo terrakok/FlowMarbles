@@ -33,7 +33,7 @@ fun FlowMapLatest(modifier: Modifier = Modifier) {
         operator = { f1 ->
             f1.mapLatest {
                 delay(200)
-                it.copy(time = it.time + 200, color = Event.YELLOW)
+                it.copy(color = Event.YELLOW)
             }
         },
         text = """
@@ -54,7 +54,7 @@ fun FlowTransform(modifier: Modifier = Modifier) {
             f1.transform {
                 emit(it.copy(color = Event.YELLOW))
                 delay(100)
-                emit(it.copy(time = it.time + 100, color = Event.GREEN))
+                emit(it.copy(color = Event.GREEN))
             }
         },
         text = """
@@ -76,7 +76,7 @@ fun FlowTransformLatest(modifier: Modifier = Modifier) {
             f1.transformLatest {
                 emit(it.copy(color = Event.YELLOW))
                 delay(100)
-                emit(it.copy(time = it.time + 100, color = Event.GREEN))
+                emit(it.copy(color = Event.GREEN))
             }
         },
         text = """
@@ -97,7 +97,7 @@ fun FlowTransformWhile(modifier: Modifier = Modifier) {
         operator = { f1 ->
             f1.transformWhile {
                 delay(100)
-                emit(it.copy(time = it.time + 100, color = Event.PURPLE))
+                emit(it.copy(color = Event.PURPLE))
                 it.value < 2
             }
         },
@@ -130,7 +130,7 @@ fun FlowRunningReduce(modifier: Modifier = Modifier) {
         input1 = remember { generateMutableEvents() },
         operator = { f1 ->
             f1.runningReduce { acc, value ->
-                acc.copy(time = value.time, value = acc.value + value.value)
+                acc.copy(value = acc.value + value.value)
             }
         },
         text = """

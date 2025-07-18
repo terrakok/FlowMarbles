@@ -43,7 +43,7 @@ fun FlowCombine(modifier: Modifier = Modifier) {
         operator = { f1, f2 ->
             f1.combine(f2) { first, second ->
                 Event.Data(
-                    time = max(first.time, second.time),
+                    time = 0,
                     value = first.value + second.value,
                     color = first.color,
                 )
@@ -72,7 +72,7 @@ fun FlowZip(modifier: Modifier = Modifier) {
         operator = { f1, f2 ->
             f1.zip(f2) { first, second ->
                 Event.Data(
-                    time = max(first.time, second.time),
+                    time = 0,
                     value = first.value + second.value,
                     color = first.color
                 )
@@ -99,7 +99,7 @@ fun FlowFlatMapMerge(modifier: Modifier = Modifier) {
             )
         },
         operator = { f1, f2 ->
-            f1.flatMapMerge { event -> f2.map { it.copy(time = event.time + it.time) } }
+            f1.flatMapMerge { f2 }
         },
         text = "flatMapMerge { f2 }",
         modifier = modifier
@@ -117,7 +117,7 @@ fun FlowFlatMapConcat(modifier: Modifier = Modifier) {
             )
         },
         operator = { f1, f2 ->
-            f1.flatMapConcat { event -> f2.map { it.copy(time = event.time + it.time) } }
+            f1.flatMapConcat { f2 }
         },
         text = "flatMapConcat { f2 }",
         modifier = modifier
@@ -135,7 +135,7 @@ fun FlowFlatMapLatest(modifier: Modifier = Modifier) {
             )
         },
         operator = { f1, f2 ->
-            f1.flatMapLatest { event -> f2.map { it.copy(time = event.time + it.time) } }
+            f1.flatMapLatest { f2 }
         },
         text = "flatMapLatest { f2 }",
         modifier = modifier

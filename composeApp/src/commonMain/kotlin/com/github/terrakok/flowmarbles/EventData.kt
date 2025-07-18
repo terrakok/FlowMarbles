@@ -5,6 +5,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -40,7 +41,9 @@ suspend fun Flow<Event.Data>.asList(): List<Event.Data> = coroutineScope {
     val testDispatcher = StandardTestDispatcher(scheduler)
     var result: List<Event.Data>? = null
     launch(testDispatcher) {
-        result = this@asList.toList()
+        result = this@asList
+            .map { it.copy(time = scheduler.currentTime) }
+            .toList()
     }
     scheduler.advanceUntilIdle()
     result!!
