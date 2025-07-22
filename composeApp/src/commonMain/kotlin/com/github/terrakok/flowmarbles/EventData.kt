@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -34,7 +35,8 @@ fun List<Event.Data>.asFlow() = flow {
         prevTime = eventData.time
         emit(eventData)
     }
-}
+}.buffer(2) //buffer is here because we want to show a moment of the production instead of the consumption.
+//the problem is noticable with ZIP operator, for example
 
 suspend fun Flow<Event.Data>.asList(): List<Event.Data> = coroutineScope {
     val scheduler = TestCoroutineScheduler()
