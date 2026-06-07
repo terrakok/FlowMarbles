@@ -1,6 +1,6 @@
 {
-  "name": "Multiplatform App",
-  "short_name": "Multiplatform App",
+  "name": "FlowMarbles",
+  "short_name": "FlowMarbles",
   "icons": [
     {
       "src": "./android-chrome-192x192.png",
