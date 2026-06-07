@@ -6,6 +6,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
+import com.russhwolf.settings.Settings
 
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryLight,
@@ -84,17 +85,29 @@ val DarkColorScheme = darkColorScheme(
 )
 
 internal val LocalThemeIsDark = compositionLocalOf { mutableStateOf<Boolean?>(null) }
+private const val THEME_KEY = "fm_app_theme"
 
 @Composable
 internal fun AppTheme(
     onThemeChanged: @Composable (isDark: Boolean) -> Unit,
     content: @Composable () -> Unit
 ) {
-    val isDarkState = remember { mutableStateOf<Boolean?>(null) }
+    val settings = remember { Settings() }
+    val isDarkState = remember { mutableStateOf(settings.getBooleanOrNull(THEME_KEY)) }
+
     CompositionLocalProvider(
         LocalThemeIsDark provides isDarkState
     ) {
-        val isDark = isDarkState.value ?: isSystemInDarkTheme()
+        val isDarkStateValue = isDarkState.value
+        LaunchedEffect(isDarkStateValue) {
+            if (isDarkStateValue != null) {
+                settings.putBoolean(THEME_KEY, isDarkStateValue)
+            } else {
+                settings.remove(THEME_KEY)
+            }
+        }
+
+        val isDark = isDarkStateValue ?: isSystemInDarkTheme()
         onThemeChanged(!isDark)
         MaterialTheme(
             colorScheme = if (isDark) DarkColorScheme else LightColorScheme,
