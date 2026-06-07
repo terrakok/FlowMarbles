@@ -45,6 +45,7 @@ fun App(
                     )
                 }
             },
+            gesturesEnabled = !drawerState.isClosed
         ) {
             OperatorContent(
                 selectedOperator = selectedOperator,
