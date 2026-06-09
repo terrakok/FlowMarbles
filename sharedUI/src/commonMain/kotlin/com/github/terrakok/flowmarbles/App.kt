@@ -13,6 +13,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.github.terrakok.flowmarbles.theme.AppTheme
 import com.github.terrakok.flowmarbles.theme.Icons
+import com.mikepenz.markdown.compose.Markdown
+import com.mikepenz.markdown.m3.Markdown
 import kotlinx.coroutines.launch
 
 @Composable
@@ -113,9 +115,8 @@ fun OperatorContent(
         )
 
         SelectionContainer {
-            Text(
-                text = selectedOperator.doc,
-                style = MaterialTheme.typography.bodyLarge,
+            Markdown(
+                content = selectedOperator.doc,
                 modifier = Modifier.padding(16.dp)
             )
         }

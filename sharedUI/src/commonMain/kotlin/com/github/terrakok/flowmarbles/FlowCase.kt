@@ -1,6 +1,7 @@
 package com.github.terrakok.flowmarbles
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,11 +42,14 @@ fun FlowCaseCard(
                         modifier = Modifier.fillMaxWidth().height(80.dp)
                     )
                 }
-                Text(
-                    text = text,
-                    modifier = Modifier.wrapContentHeight().align(Alignment.CenterHorizontally).padding(16.dp),
-                    style = MaterialTheme.typography.titleMedium.copy()
-                )
+                SelectionContainer(
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp),
+                ) {
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.titleMedium.copy()
+                    )
+                }
                 EventFlowView(
                     events = result,
                     modifier = Modifier.fillMaxWidth().height(80.dp)

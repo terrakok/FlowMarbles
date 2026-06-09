@@ -25,6 +25,8 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.multiplatformSettings)
+            implementation(libs.markdownRenderer)
+            implementation(libs.markdownRendererM3)
         }
 
         commonTest.dependencies {
