@@ -13,7 +13,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.github.terrakok.flowmarbles.theme.AppTheme
 import com.github.terrakok.flowmarbles.theme.Icons
-import com.mikepenz.markdown.compose.Markdown
 import com.mikepenz.markdown.m3.Markdown
 import kotlinx.coroutines.launch
 
@@ -22,13 +21,19 @@ fun App(
     onThemeChanged: @Composable (isDark: Boolean) -> Unit = {}
 ) = AppTheme(onThemeChanged) {
     var selectedOperator by remember {
-        mutableStateOf(allOperators.entries.first().value.first())
+        val fragment = getBrowserUrlFragment()
+        val ops = allOperators.entries.flatMap { it.value }
+        mutableStateOf(ops.firstOrNull { it.name == fragment } ?: ops.first())
     }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
     val windowInfo = LocalWindowInfo.current
     val isCompact = windowInfo.containerDpSize.width < 800.dp
+
+    LaunchedEffect(selectedOperator) {
+        updateBrowserUrlFragment(selectedOperator.name)
+    }
 
     if (isCompact) {
         ModalNavigationDrawer(
@@ -81,6 +86,9 @@ fun App(
         }
     }
 }
+
+expect fun getBrowserUrlFragment(): String
+expect fun updateBrowserUrlFragment(fragment: String)
 
 @Composable
 fun OperatorContent(
