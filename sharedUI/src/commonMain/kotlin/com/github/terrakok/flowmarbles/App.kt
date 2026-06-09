@@ -21,7 +21,7 @@ fun App(
     onThemeChanged: @Composable (isDark: Boolean) -> Unit = {}
 ) = AppTheme(onThemeChanged) {
     var selectedOperator by remember {
-        val fragment = getBrowserUrlFragment()
+        val fragment = browserUrlFragment
         val ops = allOperators.entries.flatMap { it.value }
         mutableStateOf(ops.firstOrNull { it.name == fragment } ?: ops.first())
     }
@@ -31,8 +31,15 @@ fun App(
     val windowInfo = LocalWindowInfo.current
     val isCompact = windowInfo.containerDpSize.width < 800.dp
 
+    LaunchedEffect(Unit) {
+        listenBrowserNavigation { fragment ->
+            val operator = allOperators.entries.flatMap { it.value }.firstOrNull { it.name == fragment }
+            if (operator != null) selectedOperator = operator
+        }
+    }
+
     LaunchedEffect(selectedOperator) {
-        updateBrowserUrlFragment(selectedOperator.name)
+        browserUrlFragment = selectedOperator.name
     }
 
     if (isCompact) {
@@ -87,8 +94,8 @@ fun App(
     }
 }
 
-expect fun getBrowserUrlFragment(): String
-expect fun updateBrowserUrlFragment(fragment: String)
+expect var browserUrlFragment: String
+expect fun listenBrowserNavigation(onOpen: (String) -> Unit)
 
 @Composable
 fun OperatorContent(

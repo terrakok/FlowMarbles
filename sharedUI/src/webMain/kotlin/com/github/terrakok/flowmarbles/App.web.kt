@@ -2,9 +2,17 @@ package com.github.terrakok.flowmarbles
 
 import kotlinx.browser.window
 
-actual fun getBrowserUrlFragment(): String =
-    window.location.hash.substringAfter("#/", "")
+actual var browserUrlFragment: String
+    get() = window.location.hash.substringAfter("#/", "")
+    set(value) {
+        val current = window.location.hash.substringAfter("#/", "")
+        if (current != value) {
+            window.location.hash = "#/$value"
+            }
+    }
 
-actual fun updateBrowserUrlFragment(fragment: String) {
-    window.location.hash = "#/$fragment"
+actual fun listenBrowserNavigation(onOpen: (String) -> Unit) {
+    window.onhashchange = {
+        onOpen(window.location.hash.substringAfter("#/", ""))
+    }
 }
